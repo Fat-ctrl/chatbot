@@ -13,6 +13,10 @@ All components are completely free to use, but please note the following limitat
 
 - API Throttling: Extended or continuous use of the API may result in temporary refusal of further requests. In such cases, additional waiting time is needed before requests are accepted again.
 
+Screenshot:
+
+<img width="2246" height="692" alt="Screenshot_20250723_223352" src="https://github.com/user-attachments/assets/e29e98f0-ddb6-4224-9b9b-72f700bef34a" />
+
 ---
 
 ## Features
@@ -58,6 +62,7 @@ docker compose up --build
 
 ### 4. Usage
 
+- On first run, execute `python main.py` to populate the database with initial data.
 - Visit the chatbot UI and ask questions about the documentation.
 - The backend will search for relevant content and generate answers using Gemini.
 
@@ -83,8 +88,8 @@ docker compose up --build
 
 ## Scheduling (Production)
 
-- Use DigitalOcean App Platform or any scheduler to run `python main.py` daily for fresh data.
-- The chatbot UI can run continuously as a web service.
+- Use DigitalOcean App Platform, a cron job, or any scheduler to run `python main.py` daily for automatic data updates and ingestion.
+- The chatbot UI is designed to run continuously as a persistent web service.
 
 ---
 
