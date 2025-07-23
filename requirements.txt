@@ -1,0 +1,7 @@
+qdrant-client
+tqdm
+google-genai
+markdownify
+requests
+gradio
+python-dotenv
