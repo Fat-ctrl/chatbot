@@ -68,7 +68,7 @@ docker compose up --build
 ```
 .
 ├── main.py             # Scraper, delta detection, and Qdrant uploader
-├── scraper.py          # Scrapes OptiSigns articles and saves as markdown
+├── scraper.py          # Scrapes articles and saves as markdown
 ├── chunker.py          # Text chunking and embedding logic
 ├── qdrant.py           # Qdrant collection and search utilities
 ├── chatbot.py          # Chatbot logic (retrieval-augmented generation)
