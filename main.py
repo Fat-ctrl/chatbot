@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 import scraper
 import chunker, qdrant
+import uuid
 
 HASH_DB = "article_hashes.json"
 LOG_FILE = "job_log.txt"
@@ -61,18 +62,31 @@ def main():
     if delta_files:
         for fname in delta_files:
             fpath = os.path.join(articles_path, fname)
-            text = chunker.load_markdown_text(fpath)
-            chunks = chunker.chunk_text(text)
-            embeddings = chunker.get_embeddings_batch(chunks, task_type='QUESTION_ANSWERING')
+            try:
+                text = chunker.load_markdown_text(fpath)
+                chunks = chunker.chunk_text(text)
+                embeddings = chunker.get_embeddings_batch(chunks, task_type='QUESTION_ANSWERING')
+                if not embeddings or len(embeddings) != len(chunks):
+                    log(f"[{fname}] Embedding failed or incomplete. Skipping file.")
+                    continue
+            except Exception as e:
+                log(f"[{fname}] Embedding error: {e}")
+                continue
+
             # Upsert to Qdrant
             points = []
             for i, emb in enumerate(embeddings):
+                point_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"{fname}-{i}"))
                 points.append(qdrant.models.PointStruct(
-                    id=hashlib.sha256(f"{fname}-{i}".encode()).hexdigest(),
+                    id=point_id,
                     vector=emb.values if hasattr(emb, "values") else emb,
                     payload={"file": fname, "chunk_index": i, "text": chunks[i]}
                 ))
-            client.upsert(collection_name="OptiBot", points=points)
+            try:
+                client.upsert(collection_name="OptiBot", points=points)
+            except Exception as e:
+                log(f"[{fname}] Upsert error: {e}")
+                continue
     else:
         log("No new or updated articles to upload.")
 

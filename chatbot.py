@@ -8,8 +8,7 @@ load_dotenv()
 
 gemini_api_key = os.getenv("GEMINI_API_KEY")
 
-# # Initialize Gemini client (make sure your API key is set)
-gemini_client = genai.Client(api_key=gemini_api_key)  # Replace with your key
+gemini_client = genai.Client(api_key=gemini_api_key)  
 
 def ask_with_context(
     qdrant_client: QdrantClient,
@@ -22,7 +21,7 @@ def ask_with_context(
     """
     Search Qdrant for relevant context and ask Gemini to answer the question.
     """
-    # 1. Search Qdrant for relevant chunks
+    # Search Qdrant for relevant chunks
     results = qdrant.ask_qdrant(
         qdrant_client,
         query=question,
@@ -33,12 +32,12 @@ def ask_with_context(
     if not results:
         return "Sorry, I couldn't find relevant information."
 
-    # 2. Build context from Qdrant results
+    # Build context from Qdrant results
     context = "\n\n".join(
         f"File: {r['file']} | Chunk: {r['chunk_index']}\n{r['text']}" for r in results
     )
 
-    # 3. Compose prompt for Gemini
+    # Compose prompt for Gemini
     prompt = ( 
         "You are OptiBot, the customer-support bot for OptiSigns.com."
         "- Tone: helpful, factual, concise."
@@ -50,7 +49,7 @@ def ask_with_context(
         "Answer:"
     )
 
-    # 4. Get answer from Gemini
+    # Get answer from Gemini
     response = gemini_client.models.generate_content(
         model=model,
         contents=[prompt]
