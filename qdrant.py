@@ -29,13 +29,15 @@ def create_collection(
     
     qdrant_client = QdrantClient(database_url)
 
-    # In case someone tries running the whole notebook again they would want to create the collection again
+    # try:
+    #     qdrant_client.delete_collection(collection_name=collection_name)
+    #     print(f"Existing collection '{collection_name}' deleted.")
+    # except Exception as e:
+    #     print(f"Error deleting collection (it might not exist): {e}")
 
-    try:
-        qdrant_client.delete_collection(collection_name=collection_name)
-        print(f"Existing collection '{collection_name}' deleted.")
-    except Exception as e:
-        print(f"Error deleting collection (it might not exist): {e}")
+    if qdrant_client.get_collection(collection_name):
+        print(f"Collection '{collection_name}' already exists. Skipping creation.")
+        return qdrant_client
 
     try:
         qdrant_client.create_collection(

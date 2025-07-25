@@ -3,3 +3,4 @@
 __pycache__
 articles/
 job_log.txt
+article_hashes.json
